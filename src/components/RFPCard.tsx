@@ -6,6 +6,16 @@ interface RFPCardProps {
   rfp: RFP;
 }
 
+const getStatusColor = (status: string) => {
+  const colors = {
+    completed: 'bg-green-100 text-green-800',
+    received: 'bg-blue-100 text-blue-800', 
+    archived: 'bg-gray-100 text-gray-800',
+    Confirmed: 'bg-purple-100 text-purple-800'
+  };
+  return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+};
+
 export const RFPCard = ({ rfp }: RFPCardProps) => {
   const cutOffDate = new Date(rfp.cutOffDate);
   const month = format(cutOffDate, 'MMM').toUpperCase();
@@ -17,6 +27,9 @@ export const RFPCard = ({ rfp }: RFPCardProps) => {
         <div>
           <h3 className="text-lg font-semibold text-gray-900">{rfp.rfpName}</h3>
           <p className="text-sm text-gray-600">Agreement: {rfp.agreement_type}</p>
+          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${getStatusColor(rfp.status)}`}>
+            {rfp.status}
+          </span>
         </div>
         <div className="text-center">
           <div className="bg-blue-50 text-blue-600 px-2 py-1 rounded text-xs font-medium">
@@ -28,7 +41,7 @@ export const RFPCard = ({ rfp }: RFPCardProps) => {
       </div>
       
       <div className="flex items-center text-sm text-gray-600 mb-4">
-        <span>{format(new Date(rfp.cutOffDate), 'MMM d - MMM d, yyyy')}</span>
+        <span>{rfp.eventName}</span>
       </div>
       
       <div className="flex gap-2">
