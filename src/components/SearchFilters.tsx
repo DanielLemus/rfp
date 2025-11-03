@@ -9,6 +9,7 @@ export const SearchFilters = () => {
   const [showStatusFilter, setShowStatusFilter] = useState(false);
 
   const handleStatusChange = (status: string) => {
+    console.log('Status filter changed:', status); // Debug log
     const newStatus = filters.status.includes(status)
       ? filters.status.filter(s => s !== status)
       : [...filters.status, status];

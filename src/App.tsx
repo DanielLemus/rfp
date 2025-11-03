@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { AppRouter } from './router/AppRouter';
-import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,13 +25,11 @@ const queryClient = new QueryClient({
 
 export const App: React.FC = () => {
   return (
-    <ErrorBoundary>
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <AppRouter />
-          {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-        </QueryClientProvider>
-      </BrowserRouter>
-    </ErrorBoundary>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AppRouter />
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 };

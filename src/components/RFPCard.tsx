@@ -6,20 +6,17 @@ interface RFPCardProps {
   rfp: RFP;
 }
 
-const getStatusColor = (status: string) => {
-  const colors = {
+export const RFPCard = ({ rfp }: RFPCardProps) => {
+  const cutOffDate = new Date(rfp.cutOffDate);
+  const month = format(cutOffDate, 'MMM').toUpperCase();
+  const day = format(cutOffDate, 'd');
+
+  const statusColors = {
     completed: 'bg-green-100 text-green-800',
     received: 'bg-blue-100 text-blue-800', 
     archived: 'bg-gray-100 text-gray-800',
     Confirmed: 'bg-purple-100 text-purple-800'
   };
-  return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
-};
-
-export const RFPCard = ({ rfp }: RFPCardProps) => {
-  const cutOffDate = new Date(rfp.cutOffDate);
-  const month = format(cutOffDate, 'MMM').toUpperCase();
-  const day = format(cutOffDate, 'd');
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
@@ -27,7 +24,7 @@ export const RFPCard = ({ rfp }: RFPCardProps) => {
         <div>
           <h3 className="text-lg font-semibold text-gray-900">{rfp.rfpName}</h3>
           <p className="text-sm text-gray-600">Agreement: {rfp.agreement_type}</p>
-          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${getStatusColor(rfp.status)}`}>
+          <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${statusColors[rfp.status as keyof typeof statusColors] || 'bg-gray-100 text-gray-800'}`}>
             {rfp.status}
           </span>
         </div>
@@ -46,7 +43,7 @@ export const RFPCard = ({ rfp }: RFPCardProps) => {
       
       <div className="flex gap-2">
         <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 flex items-center justify-center gap-2">
-          <Eye size={16} />
+          <Eye size={16}/>
           View Bookings ({rfp.bookings.length})
         </button>
         <button className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">
