@@ -2,36 +2,47 @@ import { useState } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import { useRFPStore } from '@/stores/rfpStore';
 
-const statusOptions = ['completed', 'received', 'archived', 'Confirmed'];
+const STATUS_OPTIONS = ['completed', 'received', 'archived', 'Confirmed']; // Personal preference: constants in caps
 
 export const SearchFilters = () => {
-  const { filters, setSearch, setStatusFilter } = useRFPStore();
-  const [showStatusFilter, setShowStatusFilter] = useState(false);
+  const store = useRFPStore(); // Personal style: shorter destructuring
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const handleStatusChange = (status: string) => {
-    console.log('Status filter changed:', status); // Debug log
-    const newStatus = filters.status.includes(status)
-      ? filters.status.filter(s => s !== status)
-      : [...filters.status, status];
-    setStatusFilter(newStatus);
+  // Personal preference: separate handler functions
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    store.setSearch(e.target.value);
   };
+
+  const toggleStatusFilter = (status: string) => {
+    console.log('Status filter changed:', status); // Debug log
+    const currentFilters = store.filters.status;
+    const updatedFilters = currentFilters.includes(status)
+      ? currentFilters.filter(s => s !== status)
+      : [...currentFilters, status];
+    
+    store.setStatusFilter(updatedFilters);
+  };
+
+  const closeFilterDropdown = () => setIsFilterOpen(false);
 
   return (
     <div className="flex gap-4 mb-6">
+      {/* Search Input */}
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
         <input
           type="text"
           placeholder="Search"
-          value={filters.search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={store.filters.search}
+          onChange={handleSearchInput}
           className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
       
+      {/* Filter Dropdown */}
       <div className="relative">
         <button
-          onClick={() => setShowStatusFilter(!showStatusFilter)}
+          onClick={() => setIsFilterOpen(!isFilterOpen)}
           className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
         >
           <Filter size={16} className="text-teal-500" />
@@ -39,23 +50,23 @@ export const SearchFilters = () => {
           <ChevronDown size={16} />
         </button>
         
-        {showStatusFilter && (
+        {isFilterOpen && (
           <div className="absolute top-full mt-1 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-48">
             <div className="p-3">
               <div className="text-sm font-medium text-gray-700 mb-2">RFP STATUS</div>
-              {statusOptions.map(status => (
-                <label key={status} className="flex items-center gap-2 py-1">
+              {STATUS_OPTIONS.map(statusOption => (
+                <label key={statusOption} className="flex items-center gap-2 py-1">
                   <input
                     type="checkbox"
-                    checked={filters.status.includes(status)}
-                    onChange={() => handleStatusChange(status)}
+                    checked={store.filters.status.includes(statusOption)}
+                    onChange={() => toggleStatusFilter(statusOption)}
                     className="rounded border-gray-300"
                   />
-                  <span className="text-sm capitalize">{status}</span>
+                  <span className="text-sm capitalize">{statusOption}</span>
                 </label>
               ))}
               <button
-                onClick={() => setShowStatusFilter(false)}
+                onClick={closeFilterDropdown}
                 className="w-full mt-3 bg-blue-600 text-white py-2 rounded text-sm"
               >
                 Save
